@@ -1,8 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:postgresql://ep-raspy-feather-a8xj2uge.eastus2.azure.neon.tech/neondb?sslmode=require
-    username: neondb_owner
-    password: npg_GaMy5HXR3ABx
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -19,11 +21,12 @@ spring:
 application:
   security:
     jwt:
-      secret-key: 956f2385a3df64eeeda11add1b7ef4de0fdd29036e311f9a1eba1eb1c04c938db4f382e70b31c6d69955af6bef17b35f435bc7b677946b7bde0fa6bee228206ad0433085d2fb55c062426c74ce488e9c50b4074534325f15a93f9775ce29112cfe0cce65246dfd01523bfb7dac9ec774ab8406f000f6c2ef7906e615fe3786fb75df728e32ae4c7a88aab534a27400cf3093a17b7a4d22ab5704aa8a0421225070c11fe4eafd50c4dd849a49814f980a5f14df556d30cfa049124cc84d36bea583f0321f6ff29a726ff3afd8c22ef5e5ca758e59f4c0a20be8e098190eb0724422ed3027e220ddb2d630add75a847c6ce435c8bba8d817b33dc58c8d4fd7434b
+      secret-key: ${JWT_SECRET}
       expiration: 2592000000 # 30 days
       #      expiration: 86400000 # a day
       refresh-token:
         expiration: 2592000000 # 30 days
+
 server:
   servlet:
     context-path: /api
