@@ -14,8 +14,8 @@ Roamance is a social travel platform that enhances the travel experience through
 - kaziasifjawwad
 
 ## Tech Stack
-- Java 23
-- Spring Boot 3.3.x
+- Java 21
+- Spring Boot 3.2.x
 - Gradle 8.x
 - PostgreSQL 17
 - WebSocket
@@ -23,12 +23,10 @@ Roamance is a social travel platform that enhances the travel experience through
 - Spring Data JPA
 
 ## Prerequisites
-- JDK 17 or higher
+- JDK 21 or higher
 - Gradle 8.x
-- PostgreSQL 15
+- PostgreSQL 17
 - Docker (optional, for containerization)
-- Redis (for caching)
-- Elasticsearch 8.x
 
 ## Project Structure
 ```
@@ -62,16 +60,16 @@ src/
 1. Clone the repository:
    ```bash
    git clone https://github.com/Learnathon-By-Geeky-Solutions/devs.git
-   cd roamance-backend
+   cd devs
    ```
 
 2. Configure your database in `application-dev.yml`:
    ```yaml
    spring:
      datasource:
-       url: jdbc:postgresql://localhost:5432/roamance
-       username: your_username
-       password: your_password
+       url: ${DB_URL}
+       username: ${DB_USERNAME}
+       password: ${DB_PASSWORD}
    ```
 
 3. Build the project:
@@ -125,7 +123,6 @@ API documentation is available through Swagger UI at `http://localhost:8080/swag
 
 ### Environment Variables
 ```properties
-SPRING_PROFILES_ACTIVE=dev
 DB_URL=jdbc:postgresql://localhost:5432/roamance
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
@@ -148,7 +145,7 @@ Key application properties can be configured in `application.yml`:
   ```
 - Run integration tests:
   ```bash
-  ./gradlew integrationTest
+  +./gradlew integrationTest # Requires custom Gradle task configuration
   ```
 
 ## Deployment
@@ -175,6 +172,3 @@ Key application properties can be configured in `application.yml`:
 
 ## License
 [MIT License](LICENSE)
-
-## Support
-For support, email support@roamance.com or create an issue in the repository.

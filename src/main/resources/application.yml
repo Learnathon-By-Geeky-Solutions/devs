@@ -22,10 +22,9 @@ application:
   security:
     jwt:
       secret-key: ${JWT_SECRET}
-      expiration: 2592000000 # 30 days
-      #      expiration: 86400000 # a day
+      expiration: 86400000 # 24 hours
       refresh-token:
-        expiration: 2592000000 # 30 days
+        expiration: 604800000 # 7 days
 
 server:
   servlet:
