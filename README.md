@@ -124,9 +124,9 @@ API documentation is available through Swagger UI at `http://localhost:8080/swag
 ### Environment Variables
 ```properties
 DB_URL=jdbc:postgresql://localhost:5432/roamance
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-JWT_SECRET=your_jwt_secret
+DB_USERNAME=<database_username>
+DB_PASSWORD=<database_password>
+JWT_SECRET=<your_secure_secret_key>
 ```
 
 ### Application Properties
