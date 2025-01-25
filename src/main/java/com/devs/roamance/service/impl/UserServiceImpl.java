@@ -95,28 +95,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BaseResponseDto followUser(Long userId1, Long userId2) {
+    public BaseResponseDto followUser(Long followerId, Long followeeId) {
 
-        User user1 = userRepository.findById(userId1)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + userId1));
-        User user2 = userRepository.findById(userId2)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + userId2));
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + followerId));
+        User followee = userRepository.findById(followeeId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + followeeId));
 
-        if (user1.getFollowings().contains(userId2)) {
+        if (follower.getFollowing().contains(followee)) {
 
-            user1.getFollowings().remove(userId2);
-            user2.getFollowers().remove(userId1);
+            follower.getFollowing().remove(followee);
+            followee.getFollowers().remove(follower);
 
-            userRepository.save(user1);
-            userRepository.save(user2);
+            userRepository.save(follower);
+            userRepository.save(followee);
 
             return new BaseResponseDto(200, true, "User unfollowed successfully!");
         } else {
-            user1.getFollowings().add(userId2);
-            user2.getFollowers().add(userId1);
 
-            userRepository.save(user1);
-            userRepository.save(user2);
+            follower.getFollowing().add(followee);
+            followee.getFollowers().add(follower);
+
+            userRepository.save(follower);
+            userRepository.save(followee);
 
             return new BaseResponseDto(200, true, "User followed successfully!");
         }

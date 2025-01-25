@@ -7,18 +7,12 @@ import com.devs.roamance.dto.response.UserResponseDto;
 import com.devs.roamance.service.UserService;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -42,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable @NotNull Long userId) {
 
         UserResponseDto responseDto = userService.getUserById(userId);
 
@@ -68,26 +62,31 @@ public class UserController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @PostMapping("/follow/{followerId}/{followeeId}")
+    public ResponseEntity<BaseResponseDto> followUser(@PathVariable @NotNull Long followerId,
+                                                      @PathVariable @NotNull Long followeeId) {
+
+        if (followerId.equals(followeeId)) {
+
+            throw new IllegalArgumentException("Users cannot follow themselves");
+        }
+
+        BaseResponseDto responseDto = userService.followUser(followerId, followeeId);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @PutMapping("/update/{userId}")
     public ResponseEntity<BaseResponseDto> updateUser(@RequestBody UserRequestDto requestDto,
-                                                      @PathVariable Long userId) {
+                                                      @PathVariable @NotNull Long userId) {
 
         BaseResponseDto responseDto = userService.updateUser(requestDto, userId);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    @PutMapping("/follow/{userId1}/{userId2}")
-    public ResponseEntity<BaseResponseDto> followUser(@PathVariable Long userId1,
-                                                      @PathVariable Long userId2) {
-
-        BaseResponseDto responseDto = userService.followUser(userId1, userId2);
-
-        return ResponseEntity.ok(responseDto);
-    }
-
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<BaseResponseDto> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<BaseResponseDto> deleteUser(@PathVariable @NotNull Long userId) {
 
         BaseResponseDto responseDto = userService.deleteUser(userId);
 

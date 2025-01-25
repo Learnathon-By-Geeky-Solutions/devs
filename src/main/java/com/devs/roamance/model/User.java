@@ -1,19 +1,11 @@
 package com.devs.roamance.model;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,17 +25,20 @@ public class User {
 
     private String name;
     private String email;
+
+    @JsonIgnore
     private String password;
 
-    @ElementCollection
-    @CollectionTable(name = "user_followers")
-    @Column(name = "follower_id")
-    private List<Long> followers = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "user_followings")
-    @Column(name = "following_id")
-    private List<Long> followings = new ArrayList<>();
+    @ManyToMany(mappedBy = "followers")
+    private Set<User> following = new HashSet<>();
 
     private ZonedDateTime createdAt;
 
