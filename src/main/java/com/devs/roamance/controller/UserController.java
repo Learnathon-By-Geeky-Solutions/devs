@@ -5,6 +5,7 @@ import com.devs.roamance.dto.response.BaseResponseDto;
 import com.devs.roamance.dto.response.UserListResponseDto;
 import com.devs.roamance.dto.response.UserResponseDto;
 import com.devs.roamance.service.UserService;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,9 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<UserListResponseDto> searchUsers(@RequestParam String query) {
+    public ResponseEntity<UserListResponseDto> searchUsers(@RequestParam
+                                                           @Pattern(regexp = "^[a-zA-Z0-9\\s]{1,50}$")
+                                                           String query) {
 
         UserListResponseDto responseDtos = userService.searchUsers(query);
 
