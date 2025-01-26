@@ -134,8 +134,14 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + userId));
 
+        existingUser.getFollowers().forEach(follower ->
+                follower.getFollowing().remove(existingUser));
+        existingUser.getFollowing().forEach(following ->
+                following.getFollowers().remove(existingUser));
+
         userRepository.delete(existingUser);
 
         return new BaseResponseDto(204, true, "User deleted successfully!");
     }
+
 }
