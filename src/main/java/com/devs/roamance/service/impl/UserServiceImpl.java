@@ -97,6 +97,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public BaseResponseDto followUser(Long followerId, Long followeeId) {
 
+        if (followerId.equals(followeeId)) {
+
+            throw new IllegalArgumentException("User cannot follow themselves");
+        }
+
         User follower = userRepository.findById(followerId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE + followerId));
         User followee = userRepository.findById(followeeId)

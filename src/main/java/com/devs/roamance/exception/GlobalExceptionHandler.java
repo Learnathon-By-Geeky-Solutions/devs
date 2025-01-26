@@ -1,11 +1,13 @@
 package com.devs.roamance.exception;
 
 import com.devs.roamance.dto.response.BaseResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -22,7 +24,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<BaseResponseDto> handleGeneralException() {
+    public ResponseEntity<BaseResponseDto> handleGeneralException(Exception ex) {
+
+        log.error("Internal server error occurred", ex);
 
         return new ResponseEntity<>(new BaseResponseDto(500, false, "Internal server error"),
                 HttpStatus.INTERNAL_SERVER_ERROR);
