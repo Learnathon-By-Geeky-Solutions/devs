@@ -1,7 +1,6 @@
 package com.devs.roamance.dto;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +17,6 @@ public class UserDto {
 
     private String name;
     private String email;
-
-    private Set<UserShortDto> followers;
-    private Set<UserShortDto> followings;
 
     private ZonedDateTime createdAt;
 }

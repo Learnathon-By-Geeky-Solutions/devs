@@ -17,6 +17,7 @@ public class UserListResponseDto extends BaseResponseDto {
     private List<UserDto> data;
 
     public UserListResponseDto(int status, boolean success, String message, List<UserDto> data) {
+
         super(status, success, message);
         this.data = data;
     }
