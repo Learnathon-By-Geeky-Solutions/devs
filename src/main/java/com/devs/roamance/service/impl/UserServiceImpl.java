@@ -13,10 +13,12 @@ import com.devs.roamance.exception.UserAlreadyExistException;
 import com.devs.roamance.exception.UserNotFoundException;
 import com.devs.roamance.model.User;
 import com.devs.roamance.repository.UserRepository;
+import com.devs.roamance.security.JwtUtils;
 import com.devs.roamance.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,18 +26,25 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper,
+                           PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
 
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
     public BaseResponseDto create(UserCreateRequestDto requestDto) {
 
         try {
+            requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+
             User user = modelMapper.map(requestDto, User.class);
 
             userRepository.save(user);
@@ -84,6 +93,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto getFromAuthHeader(String header) {
+
+        String token = jwtUtils.getTokenFromHeader(header);
+
+        String email = jwtUtils.getEmailFromToken(token);
+
+        return getByEmail(email);
+    }
+
+    @Override
     public UserListResponseDto search(String query) {
 
         List<User> users = userRepository.searchUsers(query);
@@ -124,6 +143,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(existingUser);
 
-        return new BaseResponseDto(204, true, ResponseMessage.USER_DELETE_SUCCESS);
+        return new BaseResponseDto(200, true, ResponseMessage.USER_DELETE_SUCCESS);
     }
 }
