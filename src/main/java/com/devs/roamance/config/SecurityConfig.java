@@ -1,7 +1,6 @@
 package com.devs.roamance.config;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.devs.roamance.security.AuthTokenFilter;
@@ -69,7 +68,7 @@ public class SecurityConfig {
 
             CorsConfiguration cfg = new CorsConfiguration();
 
-            cfg.setAllowedOrigins(Collections.singletonList(frontendUrl));
+            cfg.setAllowedOrigins(List.of(frontendUrl));
             cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
             cfg.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
             cfg.setExposedHeaders(List.of("Authorization"));
