@@ -10,9 +10,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +31,6 @@ public class User {
     private String password;
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", updatable = false)
     private ZonedDateTime createdAt;
 }
