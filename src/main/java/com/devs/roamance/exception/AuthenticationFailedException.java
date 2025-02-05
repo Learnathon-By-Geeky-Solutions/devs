@@ -1,12 +1,15 @@
 package com.devs.roamance.exception;
 
+import java.io.Serial;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class AuthenticationFailedException extends RuntimeException {
 
-    public AuthenticationFailedException(String message) {
+  @Serial private static final long serialVersionUID = 1L;
 
-        super(message);
-    }
+  public AuthenticationFailedException(String message) {
+
+    super(message);
+  }
 }

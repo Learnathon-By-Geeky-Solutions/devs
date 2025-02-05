@@ -1,12 +1,15 @@
 package com.devs.roamance.exception;
 
+import java.io.Serial;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class AuthTokenNotFoundException extends RuntimeException {
 
-    public AuthTokenNotFoundException(String message) {
+  @Serial private static final long serialVersionUID = 1L;
 
-        super(message);
-    }
+  public AuthTokenNotFoundException(String message) {
+
+    super(message);
+  }
 }

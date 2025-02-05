@@ -13,10 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthRequestDto {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
-    private String email;
+  @NotBlank(message = "Email is required")
+  @Email(message = "Email must be valid")
+  private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
+  @NotBlank(message = "Password is required")
+  private String password;
 }

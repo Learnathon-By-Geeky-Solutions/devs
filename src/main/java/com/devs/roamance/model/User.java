@@ -1,10 +1,12 @@
 package com.devs.roamance.model;
 
-import java.time.ZonedDateTime;
-
+import com.devs.roamance.constant.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,16 +23,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    private String name;
-    private String email;
-    @JsonIgnore
-    private String password;
+  private String name;
+  private String email;
+  @JsonIgnore private String password;
 
-    @CreatedDate
-    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", updatable = false)
-    private ZonedDateTime createdAt;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Enumerated(EnumType.STRING)
+  private Set<Role> roles = new HashSet<>();
+
+  @CreatedDate
+  @Column(updatable = false)
+  private OffsetDateTime createdAt;
 }

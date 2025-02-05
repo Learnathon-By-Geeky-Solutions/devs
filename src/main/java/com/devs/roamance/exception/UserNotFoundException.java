@@ -1,12 +1,15 @@
 package com.devs.roamance.exception;
 
+import java.io.Serial;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class UserNotFoundException extends RuntimeException {
 
-    public UserNotFoundException(String message) {
+  @Serial private static final long serialVersionUID = 1L;
 
-        super(message);
-    }
+  public UserNotFoundException(String message) {
+
+    super(message);
+  }
 }

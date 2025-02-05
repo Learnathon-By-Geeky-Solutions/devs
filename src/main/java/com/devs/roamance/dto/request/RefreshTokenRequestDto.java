@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RefreshTokenRequestDto {
 
-    @NotBlank(message = "Refresh token is empty!")
-    @JsonProperty("refresh_token")
-    private String refreshToken;
+  @NotBlank(message = "Refresh token is empty!")
+  @JsonProperty("refresh_token")
+  private String refreshToken;
 }

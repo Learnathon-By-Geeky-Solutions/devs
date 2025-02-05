@@ -1,24 +1,25 @@
 package com.devs.roamance.repository;
 
+import com.devs.roamance.model.User;
 import java.util.List;
 import java.util.Optional;
-
-import com.devs.roamance.model.User;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
-    Optional<User> findByEmail(String email);
+  Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u " +
-            "WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "ORDER BY " +
-            "CASE " +
-            "   WHEN LOWER(u.name) = LOWER(:query) THEN 0 " +
-            "   WHEN LOWER(u.name) LIKE LOWER(CONCAT(:query, '%')) THEN 1 " +
-            "   ELSE 2 " +
-            "END")
-    List<User> searchUsers(@Param("query") String query);
+  @Query(
+      "SELECT u FROM User u "
+          + "WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) "
+          + "ORDER BY "
+          + "CASE "
+          + "   WHEN LOWER(u.name) = LOWER(:query) THEN 0 "
+          + "   WHEN LOWER(u.name) LIKE LOWER(CONCAT(:query, '%')) THEN 1 "
+          + "   ELSE 2 "
+          + "END")
+  List<User> searchUsers(@Param("query") String query);
 }

@@ -6,7 +6,7 @@ import com.devs.roamance.dto.response.AuthResponseDto;
 
 public interface AuthService {
 
-    AuthResponseDto login(AuthRequestDto requestDto);
+  AuthResponseDto login(AuthRequestDto requestDto);
 
-    AuthResponseDto refreshToken(RefreshTokenRequestDto requestDto);
+  AuthResponseDto refreshToken(RefreshTokenRequestDto requestDto);
 }

@@ -1,12 +1,15 @@
 package com.devs.roamance.exception;
 
+import java.io.Serial;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class WrongCredentialsException extends RuntimeException {
 
-    public WrongCredentialsException(String message) {
+  @Serial private static final long serialVersionUID = 1L;
 
-        super(message);
-    }
+  public WrongCredentialsException(String message) {
+
+    super(message);
+  }
 }

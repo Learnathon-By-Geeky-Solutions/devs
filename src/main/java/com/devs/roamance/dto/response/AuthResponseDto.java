@@ -12,15 +12,17 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthResponseDto extends BaseResponseDto {
 
-    @JsonProperty("access_token")
-    private String accessToken;
-    @JsonProperty("refresh_token")
-    private String refreshToken;
+  @JsonProperty("access_token")
+  private String accessToken;
 
-    public AuthResponseDto(int status, boolean success, String message, String accessToken, String refreshToken) {
+  @JsonProperty("refresh_token")
+  private String refreshToken;
 
-        super(status, success, message);
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
+  public AuthResponseDto(
+      int status, boolean success, String message, String accessToken, String refreshToken) {
+
+    super(status, success, message);
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
 }

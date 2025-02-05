@@ -1,12 +1,15 @@
 package com.devs.roamance.exception;
 
+import java.io.Serial;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class UserAlreadyExistException extends RuntimeException {
 
-    public UserAlreadyExistException(String message) {
+  @Serial private static final long serialVersionUID = 1L;
 
-        super(message);
-    }
+  public UserAlreadyExistException(String message) {
+
+    super(message);
+  }
 }

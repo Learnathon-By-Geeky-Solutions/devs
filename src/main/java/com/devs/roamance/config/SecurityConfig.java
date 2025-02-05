@@ -1,9 +1,8 @@
 package com.devs.roamance.config;
 
+import com.devs.roamance.security.AuthTokenFilter;
 import java.util.Arrays;
 import java.util.List;
-
-import com.devs.roamance.security.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,68 +25,62 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${application.frontend.url}")
-    private String frontendUrl;
+  @Value("${application.frontend.url}")
+  private String frontendUrl;
 
-    private final AuthTokenFilter authTokenFilter;
+  private final AuthTokenFilter authTokenFilter;
 
-    @Autowired
-    public SecurityConfig(AuthTokenFilter authTokenFilter) {
+  @Autowired
+  public SecurityConfig(AuthTokenFilter authTokenFilter) {
 
-        this.authTokenFilter = authTokenFilter;
-    }
+    this.authTokenFilter = authTokenFilter;
+  }
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+  @Bean
+  SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        return httpSecurity
+    return httpSecurity
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            authorize -> {
+              authorize.requestMatchers("/users/register", "/auth/**").permitAll();
+              authorize.requestMatchers("/admin/**").hasRole("ADMIN");
+              authorize.anyRequest().authenticated();
+            })
+        .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+        .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .build();
+  }
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+  private CorsConfigurationSource corsConfigurationSource() {
 
-                .authorizeHttpRequests(authorize -> {
+    return request -> {
+      CorsConfiguration cfg = new CorsConfiguration();
 
-                    authorize.requestMatchers("/users/register", "/auth/**").permitAll();
+      cfg.setAllowedOrigins(List.of(frontendUrl));
+      cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+      cfg.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+      cfg.setExposedHeaders(List.of("Authorization"));
+      cfg.setAllowCredentials(true);
+      cfg.setMaxAge(3600L);
 
-                    authorize.anyRequest().authenticated();
-                })
+      return cfg;
+    };
+  }
 
-                .headers(headers ->
-                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+  @Bean
+  PasswordEncoder passwordEncoder() {
 
-                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+    return new BCryptPasswordEncoder();
+  }
 
-                .csrf(AbstractHttpConfigurer::disable)
+  @Bean
+  AuthenticationManager authenticationManager(AuthenticationConfiguration builder)
+      throws Exception {
 
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())).build();
-    }
-
-    private CorsConfigurationSource corsConfigurationSource() {
-
-        return request -> {
-
-            CorsConfiguration cfg = new CorsConfiguration();
-
-            cfg.setAllowedOrigins(List.of(frontendUrl));
-            cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-            cfg.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-            cfg.setExposedHeaders(List.of("Authorization"));
-            cfg.setAllowCredentials(true);
-            cfg.setMaxAge(3600L);
-
-            return cfg;
-        };
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-
-        return builder.getAuthenticationManager();
-    }
+    return builder.getAuthenticationManager();
+  }
 }

@@ -12,11 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserResponseDto extends BaseResponseDto {
 
-    private UserDto data;
+  private UserDto data;
 
-    public UserResponseDto(int status, boolean success, String message, UserDto data) {
+  public UserResponseDto(int status, boolean success, String message, UserDto data) {
 
-        super(status, success, message);
-        this.data = data;
-    }
+    super(status, success, message);
+    this.data = data;
+  }
 }
