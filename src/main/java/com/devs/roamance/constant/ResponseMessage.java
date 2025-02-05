@@ -21,4 +21,5 @@ public final class ResponseMessage {
     public static final String AUTH_TOKEN_MISSING = "Authentication token is missing!";
     public static final String WRONG_CREDENTIALS = "Wrong credentials!";
     public static final String JWT_CLAIMS_EMPTY = "JWT claims string is empty!";
+    public static final String INVALID_TOKEN_TYPE = "Invalid token type!";
 }

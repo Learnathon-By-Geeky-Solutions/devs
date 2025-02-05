@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
             existingUser.setEmail(requestDto.getEmail());
         }
         if (requestDto.getPassword() != null && !requestDto.getPassword().isEmpty()) {
-            existingUser.setPassword(requestDto.getPassword());
+            existingUser.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         }
 
         userRepository.save(existingUser);
