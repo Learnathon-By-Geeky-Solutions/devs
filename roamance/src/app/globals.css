@@ -1,0 +1,233 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Travel-specific theme colors */
+  --color-ocean-light: var(--ocean-light);
+  --color-ocean: var(--ocean);
+  --color-ocean-dark: var(--ocean-dark);
+  --color-sunset-light: var(--sunset-light);
+  --color-sunset: var(--sunset);
+  --color-sunset-dark: var(--sunset-dark);
+  --color-forest-light: var(--forest-light);
+  --color-forest: var(--forest);
+  --color-forest-dark: var(--forest-dark);
+  --color-sand-light: var(--sand-light);
+  --color-sand: var(--sand);
+  --color-sand-dark: var(--sand-dark);
+  --color-mountain-light: var(--mountain-light);
+  --color-mountain: var(--mountain);
+  --color-mountain-dark: var(--mountain-dark);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.2 0 0);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.2 0 0);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.2 0 0);
+
+  /* Ocean Blue theme color - also used as primary */
+  --ocean-light: #7fb3d5;
+  --ocean: #2980b9;
+  --ocean-dark: #1a5276;
+  --primary: var(--ocean);
+  --primary-foreground: oklch(0.99 0 0);
+
+  /* Sunset Orange as secondary */
+  --sunset-light: #f5b041;
+  --sunset: #e67e22;
+  --sunset-dark: #ba4a00;
+  --secondary: var(--sunset);
+  --secondary-foreground: oklch(0.99 0 0);
+
+  /* Sandy Beige as muted */
+  --sand-light: #f9e79f;
+  --sand: #f4d03f;
+  --sand-dark: #d4ac0d;
+  --muted: oklch(0.9 0.05 80);
+  --muted-foreground: oklch(0.45 0.05 80);
+
+  /* Tropical Green/Forest as accent */
+  --forest-light: #7dcea0;
+  --forest: #27ae60;
+  --forest-dark: #196f3d;
+  --accent: var(--forest);
+  --accent-foreground: oklch(0.99 0 0);
+
+  /* Mountain colors */
+  --mountain-light: #a6acaf;
+  --mountain: #707b7c;
+  --mountain-dark: #424949;
+
+  /* Adventure Red as destructive */
+  --destructive: oklch(0.6 0.25 25);
+  --border: oklch(0.85 0.02 80);
+  --input: oklch(0.85 0.02 80);
+  --ring: var(--ocean);
+
+  /* Chart colors - landscape colors */
+  --chart-1: var(--ocean); /* Ocean Blue */
+  --chart-2: var(--sunset); /* Sunset Orange */
+  --chart-3: var(--forest); /* Tropical Green */
+  --chart-4: oklch(0.7 0.1 270); /* Lavender Fields */
+  --chart-5: var(--sand); /* Desert Gold/Sand */
+
+  /* Sidebar - Light Theme */
+  --sidebar: oklch(0.96 0.03 250);
+  --sidebar-foreground: oklch(0.2 0 0);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.88 0.05 250);
+  --sidebar-accent-foreground: oklch(0.2 0 0);
+  --sidebar-border: oklch(0.85 0.05 250);
+  --sidebar-ring: var(--ring);
+}
+
+.dark {
+  --background: oklch(0.15 0.02 250);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.18 0.03 250);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.18 0.03 250);
+  --popover-foreground: oklch(0.95 0 0);
+
+  /* Brighter Ocean Blue as primary in dark mode */
+  --primary: oklch(0.65 0.22 250);
+  --primary-foreground: oklch(0.1 0 0);
+
+  /* Vibrant Sunset Orange as secondary */
+  --secondary: oklch(0.25 0.05 35);
+  --secondary-foreground: oklch(0.95 0 0);
+
+  /* Dark Sandy Beige as muted */
+  --muted: oklch(0.25 0.02 80);
+  --muted-foreground: oklch(0.7 0.05 80);
+
+  /* Dark Tropical Green as accent */
+  --accent: oklch(0.25 0.05 150);
+  --accent-foreground: oklch(0.95 0 0);
+
+  /* Vibrant Adventure Red as destructive */
+  --destructive: oklch(0.7 0.28 25);
+  --border: oklch(0.3 0.05 250);
+  --input: oklch(0.3 0.05 250);
+  --ring: oklch(0.65 0.22 250);
+
+  /* Chart colors - dark landscape colors */
+  --chart-1: oklch(0.65 0.25 250); /* Ocean Blue */
+  --chart-2: oklch(0.75 0.28 35); /* Sunset Orange */
+  --chart-3: oklch(0.7 0.22 150); /* Tropical Green */
+  --chart-4: oklch(0.62 0.15 270); /* Lavender Fields */
+  --chart-5: oklch(0.75 0.18 60); /* Desert Gold */
+
+  /* Sidebar - Dark Theme */
+  --sidebar: oklch(0.18 0.03 250);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.22 0.04 250);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.3 0.05 250);
+  --sidebar-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans);
+  }
+
+  de,
+  pre {
+    font-family: var(--font-geist-mono);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes zoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.animate-zoom {
+  animation: zoom 4s ease-in-out infinite;
+}
