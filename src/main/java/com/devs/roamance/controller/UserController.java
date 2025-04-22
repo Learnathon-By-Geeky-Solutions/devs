@@ -1,19 +1,19 @@
 package com.devs.roamance.controller;
 
-import com.devs.roamance.dto.request.user.UserCreateRequestDto;
-import com.devs.roamance.dto.request.user.UserUpdateRequestDto;
+import com.devs.roamance.dto.request.UserCreateRequestDto;
+import com.devs.roamance.dto.request.UserUpdateRequestDto;
 import com.devs.roamance.dto.response.BaseResponseDto;
-import com.devs.roamance.dto.response.user.UserListResponseDto;
-import com.devs.roamance.dto.response.user.UserResponseDto;
+import com.devs.roamance.dto.response.UserListResponseDto;
+import com.devs.roamance.dto.response.UserResponseDto;
 import com.devs.roamance.service.UserService;
 import com.devs.roamance.util.PaginationSortingUtil;
-import com.devs.roamance.util.UserUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +23,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   private final UserService userService;
-  private final UserUtil userUtil;
 
-  public UserController(UserService userService, UserUtil userUtil) {
+  @Autowired
+  public UserController(UserService userService) {
 
     this.userService = userService;
-    this.userUtil = userUtil;
   }
 
-  @PostMapping
+  @PostMapping("/register")
   public ResponseEntity<BaseResponseDto> createUser(
       @Valid @RequestBody UserCreateRequestDto requestDto) {
 
@@ -44,7 +43,7 @@ public class UserController {
   public ResponseEntity<UserListResponseDto> getAllUsers(
       @RequestParam(defaultValue = "0") int pageNumber,
       @RequestParam(defaultValue = "10") int pageSize,
-      @RequestParam(defaultValue = "name") String sortBy,
+      @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "asc") String sortDir) {
 
     int[] validatedParams = PaginationSortingUtil.validatePaginationParams(pageNumber, pageSize);
@@ -72,12 +71,11 @@ public class UserController {
     return ResponseEntity.ok(responseDto);
   }
 
-  @GetMapping("/me")
-  public ResponseEntity<UserResponseDto> getUserProfile() {
+  @GetMapping("/profile")
+  public ResponseEntity<UserResponseDto> getUserFromAuthHeader(
+      @RequestHeader("Authorization") String header) {
 
-    UUID userId = userUtil.getAuthenticatedUser().getId();
-
-    UserResponseDto responseDto = userService.get(userId);
+    UserResponseDto responseDto = userService.getFromAuthHeader(header);
 
     return ResponseEntity.ok(responseDto);
   }
@@ -96,21 +94,22 @@ public class UserController {
     return ResponseEntity.ok(responseDto);
   }
 
-  @PutMapping
+  @PutMapping("/update")
   public ResponseEntity<BaseResponseDto> updateUser(
-      @Valid @RequestBody UserUpdateRequestDto requestDto) {
+      @Valid @RequestBody UserUpdateRequestDto requestDto,
+      @RequestHeader("Authorization") String header) {
 
-    UUID userId = userUtil.getAuthenticatedUser().getId();
+    UUID userId = userService.getFromAuthHeader(header).getData().getId();
 
     BaseResponseDto responseDto = userService.update(requestDto, userId);
 
     return ResponseEntity.ok(responseDto);
   }
 
-  @DeleteMapping
-  public ResponseEntity<BaseResponseDto> deleteUser() {
+  @DeleteMapping("/delete")
+  public ResponseEntity<BaseResponseDto> deleteUser(@RequestHeader("Authorization") String header) {
 
-    UUID userId = userUtil.getAuthenticatedUser().getId();
+    UUID userId = userService.getFromAuthHeader(header).getData().getId();
 
     BaseResponseDto responseDto = userService.delete(userId);
 
