@@ -1,7 +1,6 @@
 package com.devs.roamance.dto.request.travel.journal;
 
-import com.devs.roamance.dto.request.travel.LocationCreateRequestDto;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.devs.roamance.dto.request.LocationCreateRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +19,6 @@ public class ActivitySubsectionCreateRequestDto extends SubsectionCreateRequestD
   @NotNull(message = "Location is required for activity")
   private LocationCreateRequestDto location;
 
-  @JsonProperty("activity_name")
   @NotBlank(message = "Activity name is required")
   @Size(max = 50, message = "Activity name must be less than 50 characters")
   private String activityName;

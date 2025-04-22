@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
   private final JwtUtils jwtUtils;
 
+  @Autowired
   public AuthTokenFilter(
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
       JwtUtils jwtUtil) {
@@ -46,8 +48,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     String contextPath = request.getContextPath();
 
     if (request.getRequestURI().startsWith(contextPath + "/auth")
-        || ("POST".equalsIgnoreCase(request.getMethod())
-            && request.getRequestURI().equals(contextPath + "/users"))) {
+        || request.getRequestURI().equals(contextPath + "/users/register")) {
 
       filterChain.doFilter(request, response);
 

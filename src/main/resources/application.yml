@@ -10,12 +10,13 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:
         format_sql: true
     database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   main:
     banner-mode: off
 
@@ -35,4 +36,3 @@ server:
 logging:
   level:
     root: warn
-    com.devs.roamance: info
