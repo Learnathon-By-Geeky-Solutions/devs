@@ -1,6 +1,6 @@
 package com.devs.roamance.dto.request.travel.journal;
 
-import com.devs.roamance.dto.request.LocationCreateRequestDto;
+import com.devs.roamance.dto.request.travel.LocationCreateRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

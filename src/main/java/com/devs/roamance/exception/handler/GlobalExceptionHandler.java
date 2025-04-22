@@ -1,9 +1,9 @@
 package com.devs.roamance.exception.handler;
 
 import com.devs.roamance.constant.ResponseMessage;
-import com.devs.roamance.dto.ValidationErrorDto;
 import com.devs.roamance.dto.response.BaseResponseDto;
-import com.devs.roamance.dto.response.ValidationErrorResponseDto;
+import com.devs.roamance.dto.response.validation.ValidationErrorDto;
+import com.devs.roamance.dto.response.validation.ValidationErrorResponseDto;
 import com.devs.roamance.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
@@ -21,6 +21,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 @Order(2)
 public class GlobalExceptionHandler {
+
+  // ==================== User Related Exceptions ====================
 
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<BaseResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
@@ -40,6 +42,8 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(
         new BaseResponseDto(409, false, ex.getMessage()), HttpStatus.CONFLICT);
   }
+
+  // ==================== Authentication Related Exceptions ====================
 
   @ExceptionHandler(AuthenticationFailedException.class)
   public ResponseEntity<BaseResponseDto> handleAuthenticationFailedException(
@@ -61,6 +65,16 @@ public class GlobalExceptionHandler {
         new BaseResponseDto(401, false, ex.getMessage()), HttpStatus.UNAUTHORIZED);
   }
 
+  @ExceptionHandler(AuthenticatedUserNotFoundException.class)
+  public ResponseEntity<BaseResponseDto> handleAuthenticatedUserNotFoundException(
+      AuthenticatedUserNotFoundException ex) {
+
+    log.error("AuthenticatedUserNotFoundException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(404, false, ex.getMessage()), HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(WrongCredentialsException.class)
   public ResponseEntity<BaseResponseDto> handleWrongCredentialsException(
       WrongCredentialsException ex) {
@@ -71,22 +85,7 @@ public class GlobalExceptionHandler {
         new BaseResponseDto(401, false, ex.getMessage()), HttpStatus.UNAUTHORIZED);
   }
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<BaseResponseDto> handleIllegalArgumentException(
-      IllegalArgumentException ex) {
-
-    log.error("IllegalArgumentException: {}", ex.getMessage(), ex);
-
-    return new ResponseEntity<>(
-        new BaseResponseDto(
-            400,
-            false,
-            (ResponseMessage.INVALID_TOKEN_TYPE.equals(ex.getMessage())
-                    || ResponseMessage.JWT_CLAIMS_EMPTY.equals(ex.getMessage()))
-                ? ex.getMessage()
-                : "Illegal argument!"),
-        HttpStatus.BAD_REQUEST);
-  }
+  // ==================== Validation Related Exceptions ====================
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ValidationErrorResponseDto> handleMethodArgumentNotValidException(
@@ -178,6 +177,107 @@ public class GlobalExceptionHandler {
         new ValidationErrorResponseDto(400, false, ResponseMessage.VALIDATION_FAILED, errors),
         HttpStatus.BAD_REQUEST);
   }
+
+  // ==================== Resource Related Exceptions ====================
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<BaseResponseDto> handleResourceNotFoundException(
+      ResourceNotFoundException ex) {
+
+    log.error("ResourceNotFoundException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(404, false, ex.getMessage()), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(ResourceAlreadyExistException.class)
+  public ResponseEntity<BaseResponseDto> handleResourceAlreadyExistException(
+      ResourceAlreadyExistException ex) {
+
+    log.error("ResourceAlreadyExistException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(409, false, ex.getMessage()), HttpStatus.CONFLICT);
+  }
+
+  // ==================== Authorization Related Exceptions ====================
+
+  @ExceptionHandler(UnauthorizedAccessException.class)
+  public ResponseEntity<BaseResponseDto> handleUnauthorizedAccessException(
+      UnauthorizedAccessException ex) {
+
+    log.error("UnauthorizedAccessException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(403, false, ex.getMessage()), HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(UnauthorizedActionException.class)
+  public ResponseEntity<BaseResponseDto> handleUnauthorizedActionException(
+      UnauthorizedActionException ex) {
+
+    log.error("UnauthorizedActionException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(403, false, ex.getMessage()), HttpStatus.FORBIDDEN);
+  }
+
+  // ==================== Subsection Related Exceptions ====================
+
+  @ExceptionHandler(SubsectionTypeDeserializationException.class)
+  public ResponseEntity<BaseResponseDto> handleSubsectionTypeDeserializationException(
+      SubsectionTypeDeserializationException ex) {
+
+    log.error("SubsectionTypeDeserializationException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(400, false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  // ==================== Itinerary related Exceptions ====================
+
+  @ExceptionHandler(DateOutOfRangeException.class)
+  public ResponseEntity<BaseResponseDto> handleDateOutOfRangeException(DateOutOfRangeException ex) {
+
+    log.error("DateOutOfRangeException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(400, false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ScheduleCollisionException.class)
+  public ResponseEntity<BaseResponseDto> handleScheduleCollisionException(
+      ScheduleCollisionException ex) {
+
+    log.error("ScheduleCollisionException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(400, false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(InvalidDateTimeException.class)
+  public ResponseEntity<BaseResponseDto> handleInvalidDateTimeException(
+      InvalidDateTimeException ex) {
+
+    log.error("InvalidDateTimeException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(400, false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  // ==================== General Exceptions ====================
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<BaseResponseDto> handleIllegalArgumentException(
+      IllegalArgumentException ex) {
+
+    log.error("IllegalArgumentException: {}", ex.getMessage(), ex);
+
+    return new ResponseEntity<>(
+        new BaseResponseDto(400, false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  // ==================== Fallback Exception Handler ====================
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<BaseResponseDto> handleGeneralException(Exception ex) {

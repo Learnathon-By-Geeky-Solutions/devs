@@ -1,9 +1,8 @@
 package com.devs.roamance.dto.request.travel.journal;
 
-import com.devs.roamance.dto.request.LocationUpdateRequestDto;
+import com.devs.roamance.dto.request.travel.LocationUpdateRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +20,4 @@ public class JournalUpdateRequestDto {
 
   @Size(max = 1000, message = "Description must be less than 1000 characters")
   private String description;
-
-  @Valid
-  @Size(max = 20, message = "Maximum 20 subsections allowed")
-  private List<SubsectionUpdateRequestDto> subsections;
 }

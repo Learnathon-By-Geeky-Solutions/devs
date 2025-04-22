@@ -1,19 +1,22 @@
 package com.devs.roamance.service.impl;
 
 import com.devs.roamance.constant.ResponseMessage;
-import com.devs.roamance.dto.request.AuthRequestDto;
-import com.devs.roamance.dto.request.RefreshTokenRequestDto;
-import com.devs.roamance.dto.response.AuthResponseDto;
+import com.devs.roamance.dto.request.auth.AuthRequestDto;
+import com.devs.roamance.dto.request.auth.RefreshTokenRequestDto;
+import com.devs.roamance.dto.response.auth.AuthResponseDto;
 import com.devs.roamance.exception.WrongCredentialsException;
+import com.devs.roamance.model.user.User;
+import com.devs.roamance.repository.UserRepository;
 import com.devs.roamance.security.JwtUtils;
 import com.devs.roamance.service.AuthService;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,12 +24,15 @@ public class AuthServiceImpl implements AuthService {
 
   private final JwtUtils jwtUtils;
   private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
 
-  @Autowired
-  public AuthServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
-
+  public AuthServiceImpl(
+      JwtUtils jwtUtils,
+      AuthenticationManager authenticationManager,
+      UserRepository userRepository) {
     this.jwtUtils = jwtUtils;
     this.authenticationManager = authenticationManager;
+    this.userRepository = userRepository;
   }
 
   @Override
@@ -38,14 +44,28 @@ public class AuthServiceImpl implements AuthService {
               new UsernamePasswordAuthenticationToken(
                   requestDto.getEmail(), requestDto.getPassword()));
 
-      String accessToken = jwtUtils.generateAccessToken(authentication);
-      String refreshToken = jwtUtils.generateRefreshToken(authentication);
+      Optional<User> userOptional = userRepository.findByEmail(requestDto.getEmail());
+      if (userOptional.isPresent()) {
+        User user = userOptional.get();
+        Authentication authWithUserId =
+            new UsernamePasswordAuthenticationToken(
+                authentication.getPrincipal(),
+                authentication.getCredentials(),
+                authentication.getAuthorities());
+        ((UsernamePasswordAuthenticationToken) authWithUserId).setDetails(user.getId().toString());
 
-      return new AuthResponseDto(
-          200, true, ResponseMessage.LOGIN_SUCCESS, accessToken, refreshToken);
+        SecurityContextHolder.getContext().setAuthentication(authWithUserId);
+
+        String accessToken = jwtUtils.generateAccessToken(authWithUserId);
+        String refreshToken = jwtUtils.generateRefreshToken(authWithUserId);
+
+        return new AuthResponseDto(
+            200, true, ResponseMessage.LOGIN_SUCCESS, accessToken, refreshToken);
+      } else {
+        throw new WrongCredentialsException(ResponseMessage.WRONG_CREDENTIALS);
+      }
 
     } catch (Exception e) {
-
       throw new WrongCredentialsException(ResponseMessage.WRONG_CREDENTIALS);
     }
   }
@@ -65,11 +85,13 @@ public class AuthServiceImpl implements AuthService {
     jwtUtils.validateToken(token);
 
     String email = jwtUtils.getEmailFromToken(token);
+    String userId = jwtUtils.getUserIdFromToken(token);
 
     List<GrantedAuthority> authorities = new ArrayList<>();
 
     Authentication authentication =
         new UsernamePasswordAuthenticationToken(email, null, authorities);
+    ((UsernamePasswordAuthenticationToken) authentication).setDetails(userId);
 
     String newAccessToken = jwtUtils.generateAccessToken(authentication);
     String newRefreshToken = jwtUtils.generateRefreshToken(authentication);

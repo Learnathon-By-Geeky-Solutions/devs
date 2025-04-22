@@ -1,6 +1,6 @@
 package com.devs.roamance.dto.request.travel.journal;
 
-import com.devs.roamance.dto.request.LocationCreateRequestDto;
+import com.devs.roamance.dto.request.travel.LocationCreateRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SightseeingSubsectionCreateRequestDto {
+public class SightseeingSubsectionCreateRequestDto extends SubsectionCreateRequestDto {
   @Valid
   @NotNull(message = "Location is required for sightseeing")
   private LocationCreateRequestDto location;

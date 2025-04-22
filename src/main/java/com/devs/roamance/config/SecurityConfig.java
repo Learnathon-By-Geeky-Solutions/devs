@@ -3,10 +3,10 @@ package com.devs.roamance.config;
 import com.devs.roamance.security.AuthTokenFilter;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,7 +30,6 @@ public class SecurityConfig {
 
   private final AuthTokenFilter authTokenFilter;
 
-  @Autowired
   public SecurityConfig(AuthTokenFilter authTokenFilter) {
 
     this.authTokenFilter = authTokenFilter;
@@ -44,13 +43,13 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             authorize -> {
-              authorize.requestMatchers("/users/register", "/auth/**").permitAll();
+              authorize.requestMatchers(HttpMethod.POST, "/users").permitAll();
+              authorize.requestMatchers("/auth/**").permitAll();
               authorize.requestMatchers("/admin/**").hasRole("ADMIN");
               authorize.anyRequest().authenticated();
             })
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
         .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
-        // codeql[java/spring-disabled-csrf-protection]: suppress (disabled due to stateless JWT)
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .build();

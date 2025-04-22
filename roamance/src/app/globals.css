@@ -221,13 +221,111 @@
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  @apply animate-[float_3s_ease-in-out_infinite];
 }
 
 .animate-pulse-slow {
-  animation: pulse 4s ease-in-out infinite;
+  @apply animate-[pulse_4s_ease-in-out_infinite];
 }
 
 .animate-zoom {
-  animation: zoom 4s ease-in-out infinite;
+  @apply animate-[zoom_4s_ease-in-out_infinite];
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Map Marker Popup Styles */
+.leaflet-popup-content-wrapper {
+  @apply p-0 rounded-xl overflow-hidden;
+}
+
+.leaflet-popup-content {
+  @apply m-0 w-full min-w-[240px];
+}
+
+.leaflet-popup-close-button {
+  @apply text-black/60 top-[10px] right-[10px] z-10 transition-all duration-200;
+}
+
+.dark .leaflet-popup-close-button {
+  @apply text-white/60;
+}
+
+.leaflet-popup-close-button:hover {
+  @apply text-black rotate-90;
+}
+
+.dark .leaflet-popup-close-button:hover {
+  @apply text-white;
+}
+
+.leaflet-popup-tip {
+  @apply bg-white shadow-lg;
+}
+
+.dark .leaflet-popup-tip {
+  @apply bg-[rgba(30,30,36,0.95)];
+}
+
+/* Pulsing animation for the user location dot */
+.pulse-dot .w-3 {
+  @apply relative;
+}
+
+.pulse-dot .w-3::after {
+  content: '';
+  @apply absolute top-1/2 left-1/2 w-full h-full -translate-x-1/2 -translate-y-1/2 bg-inherit rounded-full -z-10 opacity-60;
+  animation: pulseRing 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Enhance popup transition */
+.leaflet-fade-anim .leaflet-popup {
+  @apply transition-opacity duration-300 ease-in-out;
+  transition-property: opacity, transform;
+  transition-timing-function:
+    ease-in-out, cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+  @apply transition-opacity duration-300 ease-in-out;
+  transition-property: opacity, transform;
+  transition-timing-function:
+    ease-in-out, cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hide default Leaflet Routing Machine container */
+.leaflet-routing-container.hidden {
+  @apply hidden;
+}
+
+/* Style for the routing path */
+.leaflet-routing-alt {
+  @apply hidden;
+}
+
+/* Additional styles for fixing conflicts */
+.leaflet-routing-geocoder input {
+  @apply w-full box-border;
+}
+
+.leaflet-routing-container {
+  @apply hidden;
 }

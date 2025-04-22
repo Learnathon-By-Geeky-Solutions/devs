@@ -1,7 +1,12 @@
-// Auth Types
+import { ApiResponse } from './api';
+
 export interface UserAuthForm {
   email: string;
   password: string;
+}
+
+export interface RefreshTokenRequest {
+  refresh_token: string;
 }
 
 export interface UserRegisterForm extends UserAuthForm {
@@ -9,29 +14,14 @@ export interface UserRegisterForm extends UserAuthForm {
   confirmPassword: string;
 }
 
-// API Response and User interfaces
-export interface ApiResponse {
-  status: number;
-  success: boolean;
-  message: string;
-}
-
-export interface User {
+export interface UserRequest {
   id: string;
   email: string;
   name?: string;
   role?: string;
-  [key: string]: unknown;
 }
 
-export interface AuthResponse {
-  user: User;
-  token: string;
-}
-
-// New interface to extend ApiResponse with a generic data property
-
-export interface ApiAuthUserResponse extends ApiResponse {
+export interface AuthResponse extends ApiResponse {
   access_token: string;
   refresh_token: string;
 }

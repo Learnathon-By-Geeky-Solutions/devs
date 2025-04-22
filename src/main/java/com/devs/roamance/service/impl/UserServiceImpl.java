@@ -1,25 +1,23 @@
 package com.devs.roamance.service.impl;
 
 import com.devs.roamance.constant.ResponseMessage;
-import com.devs.roamance.constant.Role;
-import com.devs.roamance.dto.UserDto;
-import com.devs.roamance.dto.request.UserCreateRequestDto;
-import com.devs.roamance.dto.request.UserUpdateRequestDto;
+import com.devs.roamance.dto.request.user.UserCreateRequestDto;
+import com.devs.roamance.dto.request.user.UserUpdateRequestDto;
 import com.devs.roamance.dto.response.BaseResponseDto;
-import com.devs.roamance.dto.response.UserListResponseDto;
-import com.devs.roamance.dto.response.UserResponseDto;
+import com.devs.roamance.dto.response.user.UserDto;
+import com.devs.roamance.dto.response.user.UserListResponseDto;
+import com.devs.roamance.dto.response.user.UserResponseDto;
 import com.devs.roamance.exception.UserAlreadyExistException;
 import com.devs.roamance.exception.UserNotFoundException;
-import com.devs.roamance.model.User;
+import com.devs.roamance.model.user.Role;
+import com.devs.roamance.model.user.User;
 import com.devs.roamance.repository.UserRepository;
-import com.devs.roamance.security.JwtUtils;
 import com.devs.roamance.service.UserService;
 import com.devs.roamance.util.PaginationSortingUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,23 +33,18 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
-  private final JwtUtils jwtUtils;
 
-  @Autowired
   public UserServiceImpl(
-      UserRepository userRepository,
-      ModelMapper modelMapper,
-      PasswordEncoder passwordEncoder,
-      JwtUtils jwtUtils) {
+      UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
 
     this.userRepository = userRepository;
     this.modelMapper = modelMapper;
     this.passwordEncoder = passwordEncoder;
-    this.jwtUtils = jwtUtils;
   }
 
   @Override
-  public BaseResponseDto create(UserCreateRequestDto requestDto) {
+  @Transactional
+  public UserResponseDto create(UserCreateRequestDto requestDto) {
 
     try {
       requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
@@ -58,10 +52,14 @@ public class UserServiceImpl implements UserService {
       User user = modelMapper.map(requestDto, User.class);
 
       user.setRoles(Set.of(Role.USER));
+      user.getInfo().setUser(user);
+      user.getPreferences().setUser(user);
 
-      userRepository.save(user);
+      User savedUser = userRepository.save(user);
+      userRepository.flush();
 
-      return new BaseResponseDto(201, true, ResponseMessage.REGISTRATION_SUCCESS);
+      UserDto dto = modelMapper.map(savedUser, UserDto.class);
+      return new UserResponseDto(201, true, ResponseMessage.REGISTRATION_SUCCESS, dto);
 
     } catch (DataIntegrityViolationException e) {
 
@@ -118,16 +116,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponseDto getFromAuthHeader(String header) {
-
-    String token = jwtUtils.getTokenFromHeader(header);
-
-    String email = jwtUtils.getEmailFromToken(token);
-
-    return getByEmail(email);
-  }
-
-  @Override
   public UserListResponseDto search(String query, int pageNumber, int pageSize) {
 
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -141,7 +129,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public BaseResponseDto update(UserUpdateRequestDto requestDto, UUID userId) {
+  @Transactional
+  public UserResponseDto update(UserUpdateRequestDto requestDto, UUID userId) {
 
     User existingUser =
         userRepository
@@ -161,12 +150,16 @@ public class UserServiceImpl implements UserService {
       existingUser.setPassword(passwordEncoder.encode(requestDto.getPassword()));
     }
 
-    userRepository.save(existingUser);
+    User savedUser = userRepository.save(existingUser);
+    userRepository.flush();
 
-    return new BaseResponseDto(200, true, ResponseMessage.USER_UPDATE_SUCCESS);
+    UserDto dto = modelMapper.map(savedUser, UserDto.class);
+
+    return new UserResponseDto(200, true, ResponseMessage.USER_UPDATE_SUCCESS, dto);
   }
 
   @Override
+  @Transactional
   public BaseResponseDto delete(UUID userId) {
 
     User existingUser =

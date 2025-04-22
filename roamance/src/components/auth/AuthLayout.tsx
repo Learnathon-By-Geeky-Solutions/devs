@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { Navbar } from '@/components/navigation';
 
 interface AuthLayoutProps {
   children: React.ReactNode;

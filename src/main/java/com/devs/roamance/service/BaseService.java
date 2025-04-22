@@ -1,12 +1,14 @@
 package com.devs.roamance.service;
 
-public interface BaseService<B, E, C, U, I> {
+import com.devs.roamance.dto.response.BaseResponseDto;
 
-  B create(C createRequestDto);
+public interface BaseService<R, E, C, U, I> {
+
+  R create(C createRequestDto);
 
   E get(I id);
 
-  B update(U updateRequestDto, I id);
+  R update(U updateRequestDto, I id);
 
-  B delete(I id);
+  BaseResponseDto delete(I id);
 }
