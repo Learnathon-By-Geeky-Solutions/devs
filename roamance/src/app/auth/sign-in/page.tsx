@@ -1,5 +1,6 @@
 'use client';
 
+import { loginUser } from '@/api';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { AuthHero } from '@/components/auth/AuthHero';
 import { AuthLayout } from '@/components/auth/AuthLayout';
@@ -8,10 +9,9 @@ import { FormInput } from '@/components/auth/FormInput';
 import { SocialAuth } from '@/components/auth/SocialAuth';
 import { ErrorBanner } from '@/components/common/error-banner';
 import { LoadingButton } from '@/components/common/loading-button';
-import { routes } from '@/constants';
-import { authService } from '@/service/auth-service';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Lock, Mail, User } from 'lucide-react';
+import Cookies from 'js-cookie';
+import { Lock, Mail, RefreshCw, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
@@ -50,40 +50,75 @@ export default function SignIn() {
     },
   });
 
+  const retryLogin = () => {
+    setIsLoading(false);
+    setError('');
+    // Focus on email field
+    if (emailRef.current) {
+      emailRef.current.focus();
+    }
+  };
+
   const onSubmit = async (data: SignInFormValues) => {
     setIsLoading(true);
     setError('');
 
     try {
-      await authService.login(data.email, data.password);
+      const responseData = await loginUser({
+        email: data.email,
+        password: data.password,
+      });
 
+      if (!responseData.success) {
+        throw new Error(
+          responseData.message || 'Authentication failed. Please try again.'
+        );
+      }
+
+      // Store tokens in cookies
+      const accessTokenExpiry = new Date(
+        new Date().getTime() + 24 * 60 * 60 * 1000
+      );
+      const refreshTokenExpiry = new Date(
+        new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+      );
+      Cookies.set('access_token', responseData.access_token, {
+        expires: accessTokenExpiry,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+      });
+      Cookies.set('refresh_token', responseData.refresh_token, {
+        expires: refreshTokenExpiry,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+      });
       toast.success('Login successful', {
         description: (
           <p className="text-gray-600 dark:text-gray-400">
-            Redirecting you to your profile...
+            Redirecting you to your dashboard...
           </p>
         ),
         action: {
           label: (
             <div className="flex items-center gap-2">
-              <span>Profile</span>
+              <span>Dashboard</span>
             </div>
           ),
-          onClick: () => router.push(routes.profile.href),
+          onClick: () => router.push('/dashboard'),
         },
         className:
           'bg-white dark:bg-slate-900 border border-green-100 dark:border-green-800 shadow-lg',
         duration: 4000,
       });
-
-      router.push(routes.profile.href);
+      router.push('/dashboard');
     } catch (err) {
       const errorMessage =
         err instanceof Error
           ? err.message
           : 'Network error occurred. Please check your connection and try again.';
       setError(errorMessage);
-
       toast.error('Login error', {
         description: (
           <p className="text-gray-500 dark:text-gray-400">{errorMessage}</p>
@@ -91,19 +126,15 @@ export default function SignIn() {
         action: {
           label: (
             <div className="flex items-center gap-2">
-              <span>Create account</span>
+              <span>Try again</span>
+              <RefreshCw width="16" height="16" />
             </div>
           ),
-          onClick: () => router.push(routes.signUp.href),
+          onClick: retryLogin,
         },
         className:
           'bg-white dark:bg-slate-900 border border-red-100 dark:border-red-800 shadow-lg',
-        duration: 5000,
       });
-
-      setTimeout(() => {
-        router.push(routes.signUp.href);
-      }, 3000);
     } finally {
       setIsLoading(false);
     }

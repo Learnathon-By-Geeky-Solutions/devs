@@ -1,71 +1,41 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export function useCookies<T>(
+/**
+ * Hook for using localStorage with React state
+ */
+export function useLocalStorage<T>(
   key: string,
-  initialValue: T,
-  options: {
-    expires?: Date;
-    path?: string;
-    secure?: boolean;
-    sameSite?: 'strict' | 'lax' | 'none';
-  } = {}
-): [T | null, (value: T) => void] {
-  // Get stored value from cookies or use initialValue
-  const readValue = (): T | null => {
+  initialValue: T
+): [T, (value: T) => void] {
+  // Get stored value from localStorage or use initialValue
+  const readValue = (): T => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
 
     try {
-      const cookies = document.cookie.split(';');
-      const cookieValue = cookies
-        .find((cookie) => cookie.trim().startsWith(`${key}=`))
-        ?.split('=')[1];
-
-      return cookieValue
-        ? JSON.parse(decodeURIComponent(cookieValue))
-        : initialValue;
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.warn(`Error reading cookie key "${key}":`, error);
+      console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
   };
 
-  const [storedValue, setStoredValue] = useState<T | null>(readValue);
+  const [storedValue, setStoredValue] = useState<T>(readValue);
 
-  // Update cookies when the state changes
+  // Update localStorage when the state changes
   const setValue = (value: T) => {
     try {
       // Save state
       setStoredValue(value);
 
-      // Save to cookies
+      // Save to localStorage
       if (typeof window !== 'undefined') {
-        const {
-          expires,
-          path = '/',
-          secure = false,
-          sameSite = 'strict',
-        } = options;
-
-        let cookieString = `${key}=${encodeURIComponent(JSON.stringify(value))}`;
-
-        if (expires) {
-          cookieString += `; expires=${expires.toUTCString()}`;
-        }
-
-        cookieString += `; path=${path}`;
-
-        if (secure) {
-          cookieString += '; secure';
-        }
-
-        cookieString += `; samesite=${sameSite}`;
-
-        document.cookie = cookieString;
+        window.localStorage.setItem(key, JSON.stringify(value));
       }
     } catch (error) {
-      console.warn(`Error setting cookie key "${key}":`, error);
+      console.warn(`Error setting localStorage key "${key}":`, error);
     }
   };
 
@@ -76,3 +46,5 @@ export function useCookies<T>(
 
   return [storedValue, setValue];
 }
+
+export default useLocalStorage;
