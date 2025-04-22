@@ -47,6 +47,7 @@
     "react-hook-form": "^7.54.2",
     "react-leaflet": "^5.0.0",
     "react-leaflet-draw": "^0.20.6",
+    "sharp": "^0.34.1",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
