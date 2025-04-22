@@ -1,6 +1,6 @@
 package com.devs.roamance.model.travel.journal;
 
-import com.devs.roamance.model.travel.Location;
+import com.devs.roamance.model.Location;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.ElementCollection;

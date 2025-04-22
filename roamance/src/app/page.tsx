@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Navbar } from '@/components/navigation';
+import { Navbar } from '@/components/navbar';
 import { HeroSection } from '@/components/home/hero-section';
 import { FeatureShowcase } from '@/components/home/feature-showcase';
 import { DestinationShowcase } from '@/components/home/destination-showcase';

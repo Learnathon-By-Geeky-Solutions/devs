@@ -6,7 +6,6 @@ export * from './common/error-banner';
 export * from './common/gradient-badge';
 export * from './common/loading-button';
 export * from './common/theme-toggle';
-export * from './common/file-uploader';
 
 // Auth Components
 export * from './auth/AuthForm';
@@ -18,7 +17,7 @@ export * from './auth/FormInput';
 export * from './auth/SocialAuth';
 
 // Layout Components
-export * from './navigation';
+export * from './navbar';
 export * from './footer';
 
 // Icon Components

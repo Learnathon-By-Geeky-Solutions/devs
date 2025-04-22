@@ -1,18 +1,10 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Twitter, Instagram } from '@/components/Icons';
 import { routes } from '@/constants/routes';
 
 export function Footer() {
-  const [currentYear, setCurrentYear] = useState<string>('');
-
-  useEffect(() => {
-    setCurrentYear(new Date().getFullYear().toString());
-  }, []);
-
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto px-4 py-12">
@@ -143,28 +135,28 @@ export function Footer() {
 
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Roamance. All rights reserved.
+            © {new Date().getFullYear()} Roamance. All rights reserved.
           </p>
 
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link
+            <a
               href="#"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               <Facebook />
-            </Link>
-            <Link
+            </a>
+            <a
               href="#"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               <Twitter />
-            </Link>
-            <Link
+            </a>
+            <a
               href="#"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               <Instagram />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
