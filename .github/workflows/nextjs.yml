@@ -1,96 +1,84 @@
-# 🚀 ================================== 🚀
-# 🌟 Next.js Deployment Workflow 🌟
-# 🚀 ================================== 🚀
-name: 🌐 Deploy Next.js site to Pages
+name: 🚀 Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Define reusable environment variables
-env:
-  WORKSPACE_PATH: /home/runner/work/devs/devs/roamance
-
-# 🔐 Permissions configuration
 permissions:
-  contents: read # 📄 Read repository contents
-  pages: write # 📝 Write to GitHub Pages
-  id-token: write # 🔑 Write ID token
+  contents: read
+  pages: write
+  id-token: write
 
-# ⚙️ Concurrency settings
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# 📋 Jobs configuration
 jobs:
-  # 🛠️ Build job
   build:
     runs-on: ubuntu-latest
-    # Define defaults for run steps within this job
-    defaults:
-      run:
-        working-directory: ${{ env.WORKSPACE_PATH }}
-    env:
-      # 🔒 Environment secrets
-      NEXT_PUBLIC_API_URL: ${{ secrets.API_URL }}
-      NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-      NEXT_PUBLIC_GEONAMES_USERNAME: ${{ secrets.GEONAMES_USERNAME }}
-      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-      NEXT_PUBLIC_CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-      NEXT_PUBLIC_CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
     steps:
-      - name: 📥 Checkout
+      - name: 🛒 Checkout
         uses: actions/checkout@v4
+
       - name: 🔍 Detect package manager
         id: detect-package-manager
-        working-directory: ${{ env.WORKSPACE_PATH }}
         run: |
-          if [ -f "yarn.lock" ]; then
+          if [ -f "${{ github.workspace }}/roamance/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "package.json" ]; then
+          elif [ -f "${{ github.workspace }}/roamance/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "Unable to determine package manager"
+            echo "Unable to determine package manager in /roamance"
             exit 1
           fi
-      - name: ⚙️ Setup Node
+
+      - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ env.WORKSPACE_PATH }}/${{ steps.detect-package-manager.outputs.manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
-      - name: 🔧 Setup Pages
+          cache-dependency-path: roamance/${{ steps.detect-package-manager.outputs.manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
+
+      - name: ⚙️ Setup Pages
         uses: actions/configure-pages@v5
         with:
-          working-directory: ${{ env.WORKSPACE_PATH }}
-          static_site_generator: next
+          working-directory: roamance
+
       - name: 💾 Restore cache
         uses: actions/cache@v4
         with:
           path: |
-            ${{ env.WORKSPACE_PATH }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('${{ env.WORKSPACE_PATH }}/**/package-lock.json', '${{ env.WORKSPACE_PATH }}/**/yarn.lock') }}-${{ hashFiles('${{ env.WORKSPACE_PATH }}/**/*.[jt]s', '${{ env.WORKSPACE_PATH }}/**/*.[jt]sx') }}
+            roamance/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('roamance/**/package-lock.json', 'roamance/**/yarn.lock') }}-${{ hashFiles('roamance/**/[jt]s', 'roamance/**/[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('${{ env.WORKSPACE_PATH }}/**/package-lock.json', '${{ env.WORKSPACE_PATH }}/**/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('roamance/**/package-lock.json', 'roamance/**/yarn.lock') }}-
+
       - name: 📦 Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: 🛠️ Build with Next.js
+        working-directory: roamance
+
+      - name: 🏗️ Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        working-directory: roamance
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.API_URL }}
+          NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          NEXT_PUBLIC_GEONAMES_USERNAME: ${{ secrets.GEONAMES_USERNAME }}
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          NEXT_PUBLIC_CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          NEXT_PUBLIC_CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.WORKSPACE_PATH }}/.next
+          path: ./roamance/out
 
   deploy:
     environment:
