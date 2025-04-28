@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { DialogXButton } from '@/components/common/button/dialog-x-button';
+// Import the props type from DialogXButton
+import { DialogXButton, type DialogXButtonProps } from '@/components/common/button/dialog-x-button';
 
 import { cn } from '@/lib/utils';
 
@@ -49,8 +50,13 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
+  showCloseButton = true, // Add prop to control visibility, default true
+  closeButtonProps, // Add prop to pass customization to DialogXButton
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content>) {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & {
+  showCloseButton?: boolean; // Define the visibility prop type
+  closeButtonProps?: DialogXButtonProps; // Define the customization prop type
+}) {
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -63,10 +69,18 @@ function DialogContent({
         {...props}
       >
         {children}
-        <DialogXButton
-          data-slot="dialog-close"
-          className="ring-offset-background rounded-full focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-        />
+        {showCloseButton && ( // Conditionally render based on showCloseButton
+          <DialogXButton
+            data-slot="dialog-close"
+            // Spread the passed props, allowing overrides but keeping defaults
+            {...closeButtonProps}
+            // Combine default classes with potentially passed className
+            className={cn(
+              'ring-offset-background rounded-full focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
+              closeButtonProps?.className // Append className from props if provided
+            )}
+          />
+        )}
       </DialogPrimitive.Content>
     </DialogPortal>
   );

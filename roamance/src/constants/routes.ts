@@ -21,6 +21,14 @@ export const paths = {
   privacy: 'privacy',
   cookies: 'cookies',
 
+  social: 'social',
+  feeds: 'feeds',
+  messages: 'messages',
+  discover: 'discover',
+  explore: 'explore',
+  hashtags: 'hashtags',
+  saved: 'saved',
+
   info: 'info',
   preferences: 'preferences',
   trips: 'trips',
@@ -47,6 +55,14 @@ export const pathTitles = {
   terms: 'Terms of Service',
   privacy: 'Privacy Policy',
   cookies: 'Cookies Policy',
+
+  social: 'Social',
+  feeds: 'Feeds',
+  messages: 'Messages',
+  discover: 'Discover',
+  explore: 'Explore',
+  hashtags: 'Hashtags',
+  saved: 'Saved',
 
   info: 'Information',
   preferences: 'Preferences',
@@ -77,6 +93,13 @@ export const routes: {
   journals: RouteItem;
   journalDetail: DynamicRouteItem;
   places: RouteItem;
+  social: RouteItem;
+  feeds: RouteItem;
+  messages: RouteItem;
+  discover: RouteItem;
+  explore: RouteItem;
+  hashtags: RouteItem;
+  saved: RouteItem;
 } = {
   home: {
     title: pathTitles.home,
@@ -142,6 +165,37 @@ export const routes: {
     href: `/${paths.cookies}`,
   },
 
+  /* --------------------------------- Social --------------------------------- */
+
+  social: {
+    title: pathTitles.social,
+    href: `/${paths.social}`,
+  },
+  feeds: {
+    title: pathTitles.feeds,
+    href: `/${paths.social}`,
+  },
+  messages: {
+    title: pathTitles.messages,
+    href: `/${paths.social}/${paths.messages}`,
+  },
+  discover: {
+    title: pathTitles.discover,
+    href: `/${paths.social}/${paths.discover}`,
+  },
+  explore: {
+    title: pathTitles.explore,
+    href: `/${paths.social}/${paths.explore}`,
+  },
+  hashtags: {
+    title: pathTitles.hashtags,
+    href: `/${paths.social}/${paths.hashtags}`,
+  },
+  saved: {
+    title: pathTitles.saved,
+    href: `/${paths.social}/${paths.saved}`,
+  },
+
   /* --------------------------------- Profile -------------------------------- */
 
   info: {
@@ -170,4 +224,12 @@ export const routes: {
   },
 } as const;
 
-export const secureRoutes = [routes.profile.href] as const;
+export const secureRoutes = [
+  routes.profile.href,
+  routes.social.href,
+  routes.messages.href,
+  routes.discover.href,
+  routes.explore.href,
+  routes.hashtags.href,
+  routes.saved.href,
+];

@@ -26,6 +26,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'ichef.bbci.co.uk',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   env: {

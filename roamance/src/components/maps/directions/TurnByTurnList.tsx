@@ -29,7 +29,7 @@ export function TurnByTurnList({
   return (
     <div
       className={cn(
-        'rounded-xl overflow-hidden border',
+        'rounded-xl border',
         isDarkMode ? 'bg-card/80 border-muted/40' : 'bg-card/80 border-muted/30'
       )}
     >
@@ -51,7 +51,7 @@ export function TurnByTurnList({
       </div>
 
       {/* Directions List */}
-      <div className="max-h-[400px] overflow-y-auto">
+      <div className="h-full">
         {routeData.instructions.map((step, index) => (
           <DirectionStep
             key={`step-${index}`}

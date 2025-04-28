@@ -8,7 +8,11 @@ import { MobileNav } from './MobileNav';
 import { NavLogo } from './NavLogo';
 import { UserMenu } from './UserMenu';
 
-export function Navbar() {
+interface NavbarProps {
+  title?: string;
+}
+
+export function Navbar({ title }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
@@ -43,8 +47,15 @@ export function Navbar() {
 
       <nav className="relative h-16">
         <div className="container mx-auto flex items-center justify-between h-full px-4 md:px-6">
-          {/* Logo */}
-          <NavLogo />
+          {/* Logo with optional title */}
+          <div className="flex items-center gap-1">
+            <NavLogo />
+            {title && (
+              <h1 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                {title}
+              </h1>
+            )}
+          </div>
 
           {/* Desktop navigation links */}
           <DesktopNav />

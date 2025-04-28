@@ -1,3 +1,4 @@
+import { getImagePath } from '@/components';
 import { LocationMap } from '@/components/maps/LocationViwer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,6 @@ import { JournalSkeleton } from './journal-skeleton';
 import { SubsectionDetail } from './subsection-detail';
 import { SubsectionForm } from './subsection-form';
 import { SubsectionList } from './subsection-list';
-import { getImagePath } from '@/components';
 
 interface JournalDetailViewProps {
   journal: JournalDetail | null; // Made optional to handle loading state
@@ -143,19 +143,15 @@ export const JournalDetailView: React.FC<JournalDetailViewProps> = ({
     }
   }, [journal]);
 
-  // Update active subsection when journal changes and start background loading of all subsections
+  // Reset active subsection on journal change (collapse all) and background load of all subsections
   useEffect(() => {
-    if (journal?.subsections && journal.subsections?.length > 0) {
-      setActiveSubsection(journal.subsections[0].id);
-
-      // Start background loading of all subsections
+    if (journal?.subsections) {
       journal.subsections.forEach((subsection) => {
         fetchSubsectionDetails(subsection.id);
       });
-    } else {
-      setActiveSubsection(null);
     }
-  }, [fetchSubsectionDetails, journal]);
+    setActiveSubsection(null);
+  }, [journal?.id, fetchSubsectionDetails, journal?.subsections]);
 
   // Reset edit mode when the dialog is opened/closed
   useEffect(() => {

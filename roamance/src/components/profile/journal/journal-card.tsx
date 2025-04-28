@@ -217,7 +217,7 @@ export const JournalCard: React.FC<JournalCardProps> = ({
                 className="object-cover transition-transform duration-700 ease-in-out will-change-transform group-hover:scale-110"
               />
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500"></div>
             </div>
           ) : (
             <div
@@ -249,15 +249,6 @@ export const JournalCard: React.FC<JournalCardProps> = ({
                   }}
                 />
               </div>
-            </div>
-          )}
-
-          {/* Title overlay for cover images */}
-          {journal.cover_image && (
-            <div className="absolute inset-x-0 bottom-0 p-4 z-10">
-              <h3 className="text-white text-xl font-bold drop-shadow-md leading-tight line-clamp-2 tracking-tight">
-                {journal.title}
-              </h3>
             </div>
           )}
 

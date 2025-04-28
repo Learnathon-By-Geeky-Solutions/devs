@@ -250,7 +250,7 @@ function RoutingMachineLayer({
         map.removeControl(routingControlRef.current);
       }
     };
-  }, [locations, map, routeStyle, onRouteFound]);
+  }, [locations, map, routeStyle, onRouteFound, L]);
 
   return null;
 }
@@ -331,7 +331,7 @@ function RouteInfoControl({
         controlRef.current.remove();
       }
     };
-  }, [map, distance, time, hasActualRoute, isDarkMode]);
+  }, [map, distance, time, hasActualRoute, isDarkMode, L.Control, L.DomUtil, L.DomEvent]);
 
   return null;
 }

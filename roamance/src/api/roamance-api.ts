@@ -53,11 +53,6 @@ class Api {
           // Ensure the token is properly formatted
           config.headers.Authorization = `Bearer ${token}`;
           // For debugging
-          console.log(
-            'Request with token:',
-            config.url,
-            token.substring(0, 10) + '...'
-          );
         } else {
           console.warn('No token available for request:', config.url);
         }
@@ -139,7 +134,6 @@ class Api {
         return null;
       }
 
-      console.log('Token retrieved from cookies');
       return token;
     } catch (error) {
       console.error('Error accessing token:', error);

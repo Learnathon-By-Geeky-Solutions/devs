@@ -6,7 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useMap } from 'react-leaflet';
 import { MapControllerProps, RouteData } from '@/types/map';
 import { Control } from 'leaflet';
+import type * as Leaflet from 'leaflet';
 
+// Extend global Window interface for Leaflet plugin
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
 
 // Helper function to check if coordinates have changed
 const areCoordinatesEqual = (
@@ -37,7 +44,7 @@ export function MapController({
   onRouteCalculated,
 }: MapControllerProps) {
   const map = useMap();
-  const [leaflet, setLeaflet] = useState<typeof import('leaflet')>();
+  const [leaflet, setLeaflet] = useState<typeof Leaflet | null>(null);
   const [isLeafletLoaded, setIsLeafletLoaded] = useState(false);
   const routingControlRef = useRef<Control>(null);
   const prevRouteParamsRef = useRef<{
@@ -50,12 +57,18 @@ export function MapController({
   useEffect(() => {
     const loadLeaflet = async () => {
       try {
-        const L = await import('leaflet');
+        // Dynamically import Leaflet
+        const leafletModule = await import('leaflet');
+        // Use the single L instance for plugins
+        const L = (leafletModule.default ?? leafletModule) as typeof import('leaflet');
+        // Expose it globally so Routing Machine augments this instance
+        window.L = L;
+        // Load Routing Machine plugin (side-effects attach to L)
         await import('leaflet-routing-machine');
         setLeaflet(L);
         setIsLeafletLoaded(true);
       } catch (error) {
-        console.error('Failed to load Leaflet:', error);
+        console.error('Failed to load Leaflet or plugin:', error);
       }
     };
 
@@ -89,7 +102,7 @@ export function MapController({
     // Only proceed if Leaflet is loaded
     if (!isLeafletLoaded || !leaflet) return;
 
-    const L = leaflet;
+    const L = window.L;
 
     // Only calculate route if we have directions enabled, a destination, and a user location
     if (!directions || !destination || !userLocation) {

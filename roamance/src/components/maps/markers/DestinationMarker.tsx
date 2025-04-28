@@ -7,10 +7,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { Icon, Map } from 'leaflet';
+import type { Icon, Map as LeafletMap } from 'leaflet';
 import { Compass, Eye } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import { createIcons } from './UserLocationMarker';
 
 const Marker = dynamic(
   () => import('react-leaflet').then((mod) => mod.Marker),
@@ -39,17 +40,8 @@ export function DestinationMarker({
   const [icon, setIcon] = useState<Icon | null>(null);
 
   useEffect(() => {
-    // Dynamically import Leaflet
-    import('leaflet').then((L) => {
-      setIcon(
-        new L.Icon({
-          iconUrl:
-            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iNTQiIHZpZXdCb3g9IjAgMCAzNiA1NCIgZmlsbD0ibm9uZSIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE4IDUzLjVDMTggNTMuNSAzNiAzNS41ODUgMzYgMThDMzYgOC4wNTg5MSAyNy45NDExIDAgMTggMEM4LjA1ODkgMCAwIDguMDU4OTEgMCAxOEMwIDM1LjU4NSAxOCA1My41IDE4IDUzLjVaIiBmaWxsPSIjRTUzOTM1Ii8+CjxjaXJjbGUgY3g9IjE4IiBjeT0iMTgiIHI9IjkiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==',
-          iconSize: [36, 54],
-          iconAnchor: [18, 54],
-          popupAnchor: [0, -54],
-        })
-      );
+    createIcons().then(({ placeLocationIcon }) => {
+      setIcon(placeLocationIcon);
     });
   }, []);
 
@@ -134,7 +126,7 @@ export function DestinationMarker({
                         )?.parentElement;
 
                       interface LeafletElement extends HTMLElement {
-                        _leaflet_map: Map;
+                        _leaflet_map: LeafletMap;
                       }
 
                       if (mapElement && 'leaflet' in mapElement) {

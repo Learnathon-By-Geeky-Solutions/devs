@@ -8,5 +8,6 @@ export * from './map';
 export * from './navigation';
 export * from './places';
 export * from './response';
-export * from './user';
+export * from './social';
 export * from './subsection';
+export * from './user';
