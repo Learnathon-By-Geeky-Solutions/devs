@@ -285,4 +285,16 @@ class ItineraryServiceTest {
         () -> itineraryService.delete(testItineraryId),
         ResponseMessage.ITINERARY_DELETE_ACTION_DENIED);
   }
+
+  @Test
+  void delete_ShouldThrowException_WhenItineraryNotFound() {
+    // Arrange
+    when(itineraryRepository.findByIdLite(testItineraryId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> itineraryService.delete(testItineraryId),
+        String.format(ResponseMessage.ITINERARY_NOT_FOUND, testItineraryId));
+  }
 }

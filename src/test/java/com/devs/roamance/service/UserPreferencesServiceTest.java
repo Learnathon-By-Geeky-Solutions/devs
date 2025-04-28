@@ -38,6 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -343,6 +344,31 @@ class UserPreferencesServiceTest {
   }
 
   @Test
+  void update_ShouldThrowException_WhenDataIntegrityViolationOccurs() {
+    // Arrange
+    UserPreferencesRequestDto updateRequestDto = new UserPreferencesRequestDto();
+    updateRequestDto.setTravelStyle(TravelStyle.ADVENTUROUS);
+    updateRequestDto.setBudgetLevel(BudgetLevel.LUXURY);
+
+    when(userPreferencesRepository.findById(testPreferencesId))
+        .thenReturn(Optional.of(testUserPreferences));
+    when(userUtil.getAuthenticatedUser()).thenReturn(testUser);
+    when(userPreferencesRepository.save(any(UserPreferences.class)))
+        .thenThrow(DataIntegrityViolationException.class);
+
+    // Act & Assert
+    Exception exception =
+        assertThrows(
+            Exception.class,
+            () -> userPreferencesService.update(updateRequestDto, testPreferencesId));
+
+    assertTrue(
+        exception instanceof DataIntegrityViolationException
+            || exception instanceof ResourceAlreadyExistException,
+        "Exception should be either DataIntegrityViolationException or ResourceAlreadyExistException");
+  }
+
+  @Test
   void updateByUserId_ShouldUpdateUserPreferences() {
     // Arrange
     UserPreferencesRequestDto updateRequestDto = new UserPreferencesRequestDto();
@@ -386,6 +412,22 @@ class UserPreferencesServiceTest {
     assertNotNull(result);
     verify(userPreferencesRepository, times(1)).delete(testUserPreferences);
     verify(userRepository, times(1)).save(any(User.class));
+  }
+
+  @Test
+  void delete_ShouldThrowException_WhenUserUnauthorized() {
+    // Arrange
+    User differentUser = new User();
+    differentUser.setId(UUID.randomUUID());
+    differentUser.setRoles(Set.of(Role.USER));
+
+    when(userPreferencesRepository.findById(testPreferencesId))
+        .thenReturn(Optional.of(testUserPreferences));
+    when(userUtil.getAuthenticatedUser()).thenReturn(differentUser);
+
+    // Act & Assert
+    assertThrows(
+        UnauthorizedAccessException.class, () -> userPreferencesService.delete(testPreferencesId));
   }
 
   @Test

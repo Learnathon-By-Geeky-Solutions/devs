@@ -204,4 +204,25 @@ class AuthServiceTest {
     verify(jwtUtils, never()).validateToken(any());
     verify(jwtUtils, never()).generateAccessToken(any());
   }
+
+  @Test
+  void refreshToken_ShouldThrowIllegalArgumentException_WhenTokenValidationFails() {
+    // Arrange
+    RefreshTokenRequestDto requestDto = new RefreshTokenRequestDto();
+    String expiredToken = "expired.refresh.token";
+    requestDto.setRefreshToken(expiredToken);
+
+    when(jwtUtils.getTokenType(expiredToken)).thenReturn("refresh");
+    // Mock the validateToken method to throw an exception when called with an expired token
+    doThrow(new IllegalArgumentException("Token expired"))
+        .when(jwtUtils)
+        .validateToken(expiredToken);
+
+    // Act & Assert
+    assertThrows(IllegalArgumentException.class, () -> authService.refreshToken(requestDto));
+
+    // Verify no token generation was attempted
+    verify(jwtUtils, never()).generateAccessToken(any());
+    verify(jwtUtils, never()).generateRefreshToken(any());
+  }
 }
